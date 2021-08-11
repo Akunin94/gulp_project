@@ -1,15 +1,262 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="css/style.min.css">
-  </head>
-  <body> 
-    <h1>Test 5</h1>
-    <h1>Test 555</h1>
-    <script src="js/main.min.js"> </script>
-  </body>
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" href="images/favicon/favicon.ico">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
+	<link rel="manifest" href="images/favicon/site.webmanifest">
+	<meta name="msapplication-TileColor" content="#409EFF">
+	<meta name="theme-color" content="#409EFF">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+	<title>Система уведомления обучающихся</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=1">
+	<meta name="description" content="Система уведомления обучающихся">
+
+	<link rel="stylesheet" href="css/style.min.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="loader" id="loader">
+	<div class="loader__spiner">
+		<svg viewBox="25 25 50 50" class="circular"><circle cx="50" cy="50" r="20" fill="none" class="path"></circle></svg>
+	</div>
+</div>
+<div class="app">
+	<div class="app__main">
+		<div class="universallogin-page--wrapper">
+			<div class="universallogin-page" style="background-image: url(images/login-page_background_new.jpg)">
+				<div class="universallogin-page__container">
+					<div class="universallogin-page-content">
+					<div class="universallogin-page-content__container ">
+						<div>
+						<div class="universallogin-page-form form--showlogin">
+							<div class="universallogin-page-form__logo">
+								<a rel="noopener" href="http://ksma.ru/">
+									<img width="179" height="58" src="images/kuban_login.svg" alt="КубГМУ">
+								</a>
+							</div>
+							<div class="universallogin-page-form__legend">                 
+								<span class="universallogin-page-form__title">
+									Войти в
+									<img src="images\login_type3.svg" width="48" height="48" alt="">
+									<span>Система уведомления</span>
+								</span>
+								<div style="display: none;">
+									<span>Подключите систему уведомлений</span>
+									<span class="universallogin-page-form__checktitle">Выберите удобные мессенджеры для получения уведомлений</span>
+									<messengers-settings></messengers-settings>
+									<div class="universallogin-page-form__socials">
+										<div class="universallogin-page-form__social" @click.prevent.stop="changeConnectSocialVk()">
+											<div class="icon vk">
+											<img src="images\vk_white.svg" alt="ВКонтакте">
+											</div>
+											<span>ВКонтакте</span>
+											<el-switch 
+											:value="connectSocialVK"
+											active-color="#13ce66"
+											></el-switch>
+										</div>
+										<div class="universallogin-page-form__social" @click.prevent.stop="changeConnectSocialTg()">
+											<div class="icon tg">
+											<img src="images\tg_white.svg" alt="Telegram">
+											</div>
+											<span>Telegram</span>
+											<el-switch 
+											:value="connectSocialTelegram"
+											active-color="#13ce66"
+											></el-switch>
+										</div>
+										<div class="universallogin-page-form__social" @click.prevent.stop="changeConnectSocialVb()">
+											<div class="icon vb">
+											<img src="images\vb_white.svg" alt="Viber">
+											</div>
+											<span>Viber</span>
+											<el-switch 
+											:value="connectSocialViber"
+											active-color="#13ce66"
+											></el-switch>
+										</div>
+									</div>
+								</div> 
+							</div>
+							<div class="universallogin-page-form__form-container">
+								<form class="form loginForm" @submit.prevent="onSubmit()">
+									<div class="form__create-acc">
+										Чтобы получить данные для входа в систему обратитесь к сотруднику вашего деканата
+									</div>
+									  <fieldset class="form__fieldset-login">
+										<div class="form__row">
+										  <div class="el-input">
+											<input class="el-input__inner"
+												  type="text"
+												  name="auth"
+												  placeholder="Введите логин"
+												  v-model="auth"
+												  v-validate.disable="'required'"
+												  v-on:input="clearErrors()"
+												  ref='firstInput'
+											>
+								
+										  </div>
+										  <label class="form__label">Логин</label>
+										</div>
+										<div class="form__row">
+										  <div class="el-input">
+											<input class="el-input__inner"
+												  :type="!showPassword ? 'password' : 'text'"
+												  name="password"
+												  v-model="password"
+												  placeholder="Введите пароль"
+												  v-validate.disable="'required'"
+												  v-on:input="clearErrors()"
+											>
+											<span class="el-input__suffix" @click="showPassword = !showPassword">
+											  <span class="el-input__suffix-inner">
+												<i v-if="!showPassword"
+												class="el-input__icon fa fa-eye-slash"
+												aria-hidden="true"
+												title="Показать пароль"></i>
+											  <i v-else
+												class="el-input__icon fa fa-eye"
+												aria-hidden="true"
+												title="Скрыть пароль"></i>
+											  </span>
+											</span>
+											
+										  </div>
+										  <label class="form__label">Пароль</label>
+										</div>
+										<div class="form__row form--links">
+										  <div class="form__get-account">
+											<span class="form__get-account-button">Как получить аккаунт?</span>
+										  </div>
+										  <div class="form__forgot-password">
+											<span class="form__forgot-password-button">Забыли пароль?</span>
+										  </div>
+										</div>
+										<button class="form__button">Войти</button>
+										<div style="display: none;" class="form_button">Отмена</div>
+									  </fieldset>
+									  <fieldset class="form__fieldset-forgotpass">
+										<div class="form__row">
+										  <div class="el-input">
+											<input class="el-input__inner"
+												  type="text"
+												  name="auth"
+												  placeholder="Введите email для восстановления пароля"
+												  v-model="auth"
+												  v-validate.disable="'required'"
+												  v-on:input="clearErrors()"
+												  ref='firstInput'
+											>
+										  </div>
+										  <label class="form__label">Email</label>
+										</div>
+										<button class="form__button" @click.prevent="sendCode">Восстановить пароль</button>
+										<div class="cancelForgot">
+											<a class="cancelForgot-button" @click.prevent href="#">Отмена</a>
+										</div>
+									  </fieldset>
+									  <fieldset class="form__fieldset-code">
+										<div class="form__row">
+										  <div class="el-input">
+											<input class="el-input__inner"
+												  type="text"
+												  name="code"
+												  placeholder="Введите код восстановления пароля"
+												  v-model="code"
+												  v-validate.disable="'required'"
+												  v-on:input="clearErrors()"
+												  ref='firstInput'
+											>
+										  </div>
+										  <label class="form__label">Введите код</label>
+										</div>
+										<button class="form__button" @click.prevent="checkCode">Отправить код</button>
+										<div class="cancelForgot" @click.prevent="showLogin"><a @click.prevent href="#">Отмена</a></div>
+									  </fieldset>
+									  <fieldset class="form__fieldset-enterpass">
+										<div class="form__row">
+										  <div class="el-input">
+											<password
+											  v-model="newPassword"
+											  :toggle="true"
+											  placeholder="Введите новый пароль"
+											  v-validate.disable="'required'"
+											  v-on:input="clearErrors()"
+											  @passwordGenerated="onPasswordGenerated"
+											></password>
+										  </div>
+										  <label class="form__label">Новый пароль</label>
+										</div>
+										<div class="form__row">
+										  <div class="el-input">
+											<input class="el-input__inner"
+												  type="password"
+												  name="password"
+												  v-model="newPasswordRepeat"
+												  placeholder="Повторите ввод пароля"
+												  v-validate.disable="'required'"
+												  v-on:input="clearErrors()"
+											>
+										  </div>
+										  <label class="form__label">Повтор пароля</label>
+										</div>
+										<button class="form__button" @click.prevent="setPassword">Установить новый пароль</button>
+										<div class="cancelForgot" style="display: none;" href="#">Отмена</a></div>
+									  </fieldset>
+								  </form>
+							</div>
+							<div class="universallogin-page-form__create-account">
+								<div class="universallogin-page-form__disablenotif">
+									Не получать важные уведомления от вуза
+								</div>
+								<!-- <template v-else> -->
+									<a href="/" class="universallogin-page-form__enterby">
+										<span>Войти с помощью</span>
+										<img src="images/gos_logo.svg" width="37" height="40" alt="Гос услуги">
+									</a>
+								<!-- </template> -->
+							</div>
+						</div>
+						</div>
+					</div>
+					</div>
+		
+					<footer class="universallogin-page-footer">
+					<div class="universallogin-page-footer__wrapper">
+						<div class="universallogin-page-footer__container">
+						<a rel="noopener" href="http://ksma.ru/" target="_blank" class="universallogin-page-footer-logo" title="KSMA">
+							<img width="148" height="49" src="images/kuban_white_new.svg" 
+							alt="">
+						</a>
+						<div class="universallogin-page-footer-link">
+							<div class="universallogin-page-footer-note">Система единой авторизации</div>
+						</div>
+						<a href="https://lionsdigital.pro" class="universallogin-page-logo-ldp">
+						<div class="universallogin-page-logo-ldp__container">
+							<img width="45" height="46" src="images/ldp-logo_lion.svg" alt="Lions Digital Pro" class="universallogin-page-logo-ldp__image">
+							<div class="universallogin-page-logo-ldp__text-container">
+							<div class="universallogin-page-logo-ldp__text">Работает на технологии</div>
+							<img src="images/ldp-logo_text_new.svg" width="151" height="15" alt="Lions Universal ID" class="universallogin-page-logo-ldp__name">
+							</div>
+						</div>
+						</a>
+						</div>
+					</div>
+					</footer>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="js/main.min.js"> </script>
+</body>
 </html>
